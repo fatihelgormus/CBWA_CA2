@@ -1,5 +1,7 @@
 {
-  "name": "ionic-app-base",
-  "integrations": {},
+  "name": "mobdev-ionic-intro",
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
