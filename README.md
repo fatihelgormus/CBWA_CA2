@@ -11,7 +11,7 @@ For more details, check out [my article](https://lipanski.com/posts/smallest-doc
 The image is hosted on [Docker Hub](https://hub.docker.com/r/lipanski/docker-static-website):
 
 ```dockerfile
-FROM lipanski/docker-static-website:latest
+FROM lipanski/docker-cbwa_ca3
 
 # Copy your static files
 COPY . .
