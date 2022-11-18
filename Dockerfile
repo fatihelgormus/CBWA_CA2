@@ -1,31 +1,21 @@
+
+
 FROM alpine:latest AS builder
 
-# Install all dependencies required for compiling busybox
-RUN apk add gcc musl-dev make perl
-
-# Download busybox sources
-RUN wget https://busybox.net/downloads/busybox-1.35.0.tar.bz2 \
-  && tar xf busybox-1.35.0.tar.bz2 \
-  && mv /busybox-1.35.0 /busybox
-
-WORKDIR /busybox
-
-# Copy the busybox build config (limited to httpd)
-COPY .config .
+WORKDIR /app
 
 #Downloading and unzipping
-RUN wget https://github.com/fatihelgormus/WebDevCA2/archive/main.zip
-RUN unzip main.zip
-
-# Compile and install busybox
-RUN make && make install
+RUN wget https://github.com/fatihelgormus/MobDev_CA3/archive/main.zip
+   && tar xf main.tar.gz\
+   &&rm main.tar.gz
 
 # Create a non-root user to own the files and run our server
 RUN adduser -D static
 
-# Switch to the scratch image
-FROM scratch
+# Switch to the nginx image
+FROM nginx:alpine 
 
+#user static
 EXPOSE 8080
 
 # Copy over the user
@@ -36,7 +26,7 @@ COPY --from=builder /busybox/_install/bin/busybox /
 
 # Use our non-root user
 USER static
-WORKDIR /home/static
+WORKDIR /app/MobDev_CA3-main/
 
 # Uploads a blank default httpd.conf
 # This is only needed in order to set the `-c` argument in this base file
@@ -44,10 +34,18 @@ WORKDIR /home/static
 # want to use a httpd.conf
 COPY httpd.conf .
 
+#copy package*.json /app
+
+RUN npm install -g ionic
+RUN npm install 
+#Copy ./ / app/
+RUN npm run-script build --prod
+
+
 # Copy the static website
 # Use the .dockerignore file to control what ends up inside the image!
 # NOTE: Commented out since this will also copy the .config file
- COPY WebDevCA2 .
+ COPY MobDev_CA3 .
 
 # Run busybox httpd
 CMD ["/busybox", "httpd", "-f", "-v", "-p", "8080", "-c", "httpd.conf", "./index.html"]
