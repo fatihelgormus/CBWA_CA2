@@ -10,7 +10,9 @@ RUN wget https://github.com/fatihelgormus/MobDev_CA3/archive/main.zip
    &&rm main.tar.gz
 
 # Create a non-root user to own the files and run our server
-RUN adduser -D static
+#RUN adduser -D static
+
+WORKDIR /app/MobDev_CA3-main/
 
 # Switch to the nginx image
 FROM nginx:alpine 
@@ -25,14 +27,14 @@ COPY --from=builder /etc/passwd /etc/passwd
 #COPY --from=builder /busybox/_install/bin/busybox /
 
 # Use our non-root user
-USER static
-WORKDIR /app/MobDev_CA3-main/
+#USER static
+
 
 # Uploads a blank default httpd.conf
 # This is only needed in order to set the `-c` argument in this base file
 # and save the developer the need to override the CMD line in case they ever
 # want to use a httpd.conf
-COPY httpd.conf .
+#COPY httpd.conf .
 
 #copy package*.json /app
 
@@ -45,7 +47,7 @@ RUN npm run-script build --prod
 # Copy the static website
 # Use the .dockerignore file to control what ends up inside the image!
 # NOTE: Commented out since this will also copy the .config file
- COPY MobDev_CA3 .
+# COPY MobDev_CA3 .
 
 # Run busybox httpd
 #CMD ["/busybox", "httpd", "-f", "-v", "-p", "8080", "-c", "httpd.conf", "./index.html"]
