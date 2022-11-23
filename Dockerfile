@@ -22,7 +22,7 @@ EXPOSE 8080
 COPY --from=builder /etc/passwd /etc/passwd
 
 # Copy the busybox static binary
-COPY --from=builder /busybox/_install/bin/busybox /
+#COPY --from=builder /busybox/_install/bin/busybox /
 
 # Use our non-root user
 USER static
@@ -48,4 +48,4 @@ RUN npm run-script build --prod
  COPY MobDev_CA3 .
 
 # Run busybox httpd
-CMD ["/busybox", "httpd", "-f", "-v", "-p", "8080", "-c", "httpd.conf", "./index.html"]
+#CMD ["/busybox", "httpd", "-f", "-v", "-p", "8080", "-c", "httpd.conf", "./index.html"]
