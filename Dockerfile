@@ -1,11 +1,11 @@
 
 
-FROM alpine:latest AS builder
+FROM node AS builder
 
 WORKDIR /app
 
 #Downloading and unzipping
-RUN wget https://github.com/fatihelgormus/MobDev_CA3/archive/main.zip
+RUN wget https://github.com/fatihelgormus/MobDev_CA3/archive/main.tar.gz \
    && tar xf main.tar.gz\
    &&rm main.tar.gz
 
@@ -14,21 +14,21 @@ RUN wget https://github.com/fatihelgormus/MobDev_CA3/archive/main.zip
 
 WORKDIR /app/MobDev_CA3-main/
 
+
+RUN npm install -g ionic
+RUN npm install 
+
+RUN npm run-script build --prod
+
 # Switch to the nginx image
 FROM nginx:alpine 
 
 #user static
-EXPOSE 8080
+EXPOSE 80
 
-# Copy over the user
-COPY --from=builder /etc/passwd /etc/passwd
+RUN rm -rf /usr/share/nginx/html/*
 
-# Copy the busybox static binary
-#COPY --from=builder /busybox/_install/bin/busybox /
-
-# Use our non-root user
-#USER static
-
+COPY --from=build /app/mobdev_ca3-main/www /usr/share/nginx/html/
 
 # Uploads a blank default httpd.conf
 # This is only needed in order to set the `-c` argument in this base file
@@ -38,10 +38,8 @@ COPY --from=builder /etc/passwd /etc/passwd
 
 #copy package*.json /app
 
-RUN npm install -g ionic
-RUN npm install 
 #Copy ./ / app/
-RUN npm run-script build --prod
+
 
 
 # Copy the static website
